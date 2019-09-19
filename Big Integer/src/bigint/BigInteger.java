@@ -72,18 +72,28 @@ public class BigInteger {
 	 */
 	public static BigInteger parse(String integer) 
 	throws IllegalArgumentException {
-		
-		BigInteger intList = new BigInteger();
-		intList.front = null;
-		for (int i = 0; i < integer.length(); i++) {
-			
-			intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
-			//System.out.println(integer.charAt(i));
-			intList.numDigits++;
+		System.out.print(integer);
+		if ("".equals(integer)) {
+			throw new IllegalArgumentException("No input found");
 		}
 		
-	
-		// following line is a placeholder for compilation
+		BigInteger intList = new BigInteger();
+		
+		if(integer.charAt(0) == '-') {
+			intList.negative = true;
+		}
+		else {
+			intList.negative = false;
+		}
+		intList.front = null;
+		for (int i = 0; i < integer.length(); i++) {
+			if(Character.getNumericValue(integer.charAt(i)) != 0) {	
+				if(integer.charAt(i) != '+' && integer.charAt(i) != '-') {
+					intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
+					intList.numDigits++;
+				}
+			}
+		}
 		return intList;
 	}
 	
