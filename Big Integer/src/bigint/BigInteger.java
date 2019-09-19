@@ -73,27 +73,18 @@ public class BigInteger {
 	public static BigInteger parse(String integer) 
 	throws IllegalArgumentException {
 		
-		if (integer == null) {
-			throw new IllegalArgumentException("No input");
-			return null;
-		}
-	
-	
-		DigitNode front = new DigitNode(integer.charAt(0), null);
-					
+		BigInteger intList = new BigInteger();
+		intList.front = null;
 		for (int i = 0; i < integer.length(); i++) {
-			if (Character.isDigit(integer.charAt(i)) ) {
-				throw new IllegalArgumentException("Incorrect Format");
-				
-			}
-			front = new DigitNode(integer.charAt(i), front);
+			
+			intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
+			//System.out.println(integer.charAt(i));
+			intList.numDigits++;
+		}
 		
-		
-	}
-	
 	
 		// following line is a placeholder for compilation
-		return null;
+		return intList;
 	}
 	
 	/**
