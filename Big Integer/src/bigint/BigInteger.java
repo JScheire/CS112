@@ -128,12 +128,29 @@ public class BigInteger {
 	 * @return Result big integer
 	 */
 	public static BigInteger add(BigInteger first, BigInteger second) {
+		BigInteger result = new BigInteger();
+		result.front = null;
+		DigitNode ptr = first.front;
+		if(first.front.digit + second.front.digit < 10) {
+			while(result.next != null) {
+				result = result.next;
+			}
+			result.next = new DigitNode(first.front.digit + second.front.digit, null);
+			first.front = first.front.next;
+			second.front = second.front.next;
+		}
+		else {
+			result.front = new DigitNode((first.front.digit + second.front.digit) - 10, ptr.next);
+			result.front = new DigitNode(first.front.next.digit + 1, ptr.next.next);
+			first.front = first.front.next;
+			second.front = second.front.next;
+
+		}
+		return result;
+		}
+			
 		
-		/* IMPLEMENT THIS METHOD */
 		
-		// following line is a placeholder for compilation
-		return null;
-	}
 	
 	/**
 	 * Returns the BigInteger obtained by multiplying the first big integer
