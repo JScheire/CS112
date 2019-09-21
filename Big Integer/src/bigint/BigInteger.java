@@ -72,28 +72,47 @@ public class BigInteger {
 	 */
 	public static BigInteger parse(String integer) 
 	throws IllegalArgumentException {
-		System.out.print(integer);
+		
+		//Check for empty string input
 		if ("".equals(integer)) {
-			throw new IllegalArgumentException("No input found");
+			throw new IllegalArgumentException();
 		}
 		
 		BigInteger intList = new BigInteger();
 		
+		//If integer has non integer values, throw exception
+		try {
+			Integer.parseInt(integer);
+		}
+		catch(Exception e){
+			throw new IllegalArgumentException();
+		}
+		
+		//Check if integer is negative or positive
 		if(integer.charAt(0) == '-') {
 			intList.negative = true;
 		}
 		else {
 			intList.negative = false;
 		}
+		
+		int zeroCounter = 0;
 		intList.front = null;
+		
+		//Count the leading zeros
+		while (zeroCounter < integer.length() && integer.charAt(zeroCounter) == '0') {
+			zeroCounter++;
+		}
+		
+		integer = integer.substring(zeroCounter,integer.length()); //If integer has leading zeros, delete them
+		
+		//Create the LinkedList
 		for (int i = 0; i < integer.length(); i++) {
-			if(Character.getNumericValue(integer.charAt(i)) != 0) {	
-				if(integer.charAt(i) != '+' && integer.charAt(i) != '-') {
-					intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
-					intList.numDigits++;
+			if(integer.charAt(i) != '+' && integer.charAt(i) != '-') {
+				intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
+				intList.numDigits++;
 				}
 			}
-		}
 		return intList;
 	}
 	
