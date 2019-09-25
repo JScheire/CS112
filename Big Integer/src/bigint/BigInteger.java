@@ -129,25 +129,43 @@ public class BigInteger {
 	 */
 	public static BigInteger add(BigInteger first, BigInteger second) {
 		BigInteger result = new BigInteger();
-		result.front = null;
-		DigitNode ptr = first.front;
-		if(first.front.digit + second.front.digit < 10) {
-			while(result.next != null) {
-				result = result.next;
-			}
-			result.next = new DigitNode(first.front.digit + second.front.digit, null);
-			first.front = first.front.next;
-			second.front = second.front.next;
-		}
-		else {
-			result.front = new DigitNode((first.front.digit + second.front.digit) - 10, ptr.next);
-			result.front = new DigitNode(first.front.next.digit + 1, ptr.next.next);
-			first.front = first.front.next;
-			second.front = second.front.next;
-
-		}
+		DigitNode ptr1 = first.front;
+		DigitNode ptr2 = second.front;
+		int carry = 0;
+		while(ptr1 != null && ptr2 != null) {
+				if(result.front == null) {			
+					if(ptr1.digit + ptr2.digit >= 10) {
+						result.front = new DigitNode((ptr1.digit + ptr2.digit) - 10, null);
+						carry++;
+					}
+					else {
+						result.front = new DigitNode(ptr1.digit + ptr2.digit + carry, null);
+						carry = 0;
+					}
+				}
+				else{
+					DigitNode resultptr = result.front;
+					while(resultptr.next != null){
+						resultptr = resultptr.next;
+					}
+					if(ptr1.digit + ptr2.digit >= 10) {
+						resultptr.next = new DigitNode((ptr1.digit + ptr2.digit) - 10, null);
+						carry++;
+					}
+					else {
+						resultptr.next = new DigitNode(ptr1.digit + ptr2.digit + carry, null);
+						carry = 0;
+					}
+						
+					}
+					ptr1 = ptr1.next;
+					ptr2 = ptr2.next;
+				}
+				
 		return result;
-		}
+			}
+
+
 			
 		
 		
