@@ -121,6 +121,7 @@ public class BigInteger {
 		DigitNode resultptr = result.front;
 		int carry = 0;
 		int borrow = 0;
+		boolean firstgreater = false;
 		if (!first.negative && !second.negative) {
 			while (ptr1 != null || ptr2 != null) {
 				if (result.front == null) {
@@ -133,7 +134,7 @@ public class BigInteger {
 						resultptr = result.front;
 						carry = 0;
 					}
-				} else {						
+				} else {
 					if (ptr1 == null) {
 						resultptr.next = new DigitNode(ptr2.digit + carry, null);
 						resultptr = resultptr.next;
@@ -154,45 +155,135 @@ public class BigInteger {
 						}
 					}
 				}
-				if(ptr1 != null) ptr1 = ptr1.next;
-				if(ptr2 != null) ptr2 = ptr2.next;
+				if (ptr1 != null)
+					ptr1 = ptr1.next;
+				if (ptr2 != null)
+					ptr2 = ptr2.next;
 			}
 			if (carry != 0) {
 				resultptr.next = new DigitNode(carry, null);
 			}
 			return result;
 		}
-		//negatives
+		// negatives
 		else {
-			if(result.front == null) {
-				if(ptr1.digit - ptr2.digit < 0) {
-					result.front = new DigitNode((ptr1.digit - ptr2.digit) + 10, null);
-					resultptr = result.front;
-					borrow++;
-				}
-				else {
-					result.front = new DigitNode(ptr1.digit - ptr2.digit - carry, null);
-					resultptr = result.front;
-					borrow = 0;
-				}
+			if(first.numDigits  > second.numDigits) {
+				firstgreater = true;
+			}
+			else if(first.numDigits < second.numDigits) {
+				firstgreater = false;
 			}
 			else {
-				if(ptr1.digit - ptr2.digit < 0) {
-					resultptr.next = new DigitNode((ptr1.digit - ptr2.digit) + 10, null);
-					resultptr = result.front;
-					borrow++;
+				DigitNode negptr1 = first.front;
+				DigitNode negptr2 = second.front;
+				while(negptr1 != null && negptr2 != null) {
+					if(negptr1.digit > negptr2.digit) {
+						firstgreater = true;
+					}
+					else if(negptr1.digit < negptr2.digit) {
+						firstgreater = false;
+						
+					}
+					negptr1 = negptr1.next;
+					negptr2 = negptr2.next;
 				}
-				else {
-					resultptr.next = new DigitNode(ptr1.digit - ptr2.digit - carry, null);
-					resultptr = result.front;
-					borrow = 0;
-				}
-				
 			}
+			DigitNode greaterptr = null;
+			DigitNode lessptr = null;
+			if(firstgreater) {
+				greaterptr = first.front;
+				lessptr = second.front;
+				result.negative = first.negative;
+			}
+			else {
+				greaterptr = second.front;
+				lessptr = first.front;
+				result.negative = second.negative;
+			}
+			
+			while (greaterptr != null || lessptr != null) {
+				if (result.front == null) {
+					if (greaterptr.digit - lessptr.digit < 0) {
+						if(first.negative && second.negative)
+							result.front = new DigitNode((greaterptr.digit + lessptr.digit) - 10, null);						
+						else {
+							if(greaterptr.digit == 0) {
+								result.front = new DigitNode(9 - lessptr.digit, null);
+								borrow = 0;
+							}
+							else {
+								result.front = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
+							}
+						}
+						resultptr = result.front;
+						borrow++;
+					} else {
+						if(first.negative && second.negative) 
+							result.front = new DigitNode(greaterptr.digit + lessptr.digit + borrow, null);
+						else {
+							result.front = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
+							borrow = 0;
+						}
+						resultptr = result.front;
+						
+					}
+				} else {						
+					if (greaterptr == null) {
+						if(lessptr.digit == 0)
+							resultptr.next = new DigitNode(9, null);
+						else {
+							resultptr.next = new DigitNode(lessptr.digit - borrow, null);
+							borrow = 0;
+						}
+						resultptr = resultptr.next;
+					} else if (lessptr == null) {
+						if(greaterptr.digit == 0)
+							resultptr.next = new DigitNode(9, null);
+						else {
+							resultptr.next = new DigitNode(greaterptr.digit - borrow, null);	
+							borrow = 0;
+						}
+						resultptr = resultptr.next;	
+					} else {
+						if (greaterptr.digit - lessptr.digit < 0) {
+							if(first.negative && second.negative)
+								resultptr.next = new DigitNode((greaterptr.digit + lessptr.digit) - 10, null);
+							else {
+								if(greaterptr.digit == 0) {
+									resultptr.next = new DigitNode(9 - lessptr.digit, null);
+									borrow = 0;
+								}
+								else {
+									resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
+								}
+							}
+							resultptr = resultptr.next;
+							borrow++;
+						} else {
+							if(first.negative && second.negative) 
+								resultptr.next = new DigitNode(greaterptr.digit + lessptr.digit + borrow, null);
+							else {									
+								resultptr.next = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
+								borrow = 0;
+							}
+							resultptr = resultptr.next;
+							
+						}
+					}
+	
+				}
+				if (greaterptr != null)
+					greaterptr = greaterptr.next;
+				if (lessptr != null)
+					lessptr = lessptr.next;
+			}
+			if (borrow != 0) {
+				resultptr.next = new DigitNode(borrow, null);
+			}
+			
 			return result;
 		}
 
-		
 	}
 
 	/**
