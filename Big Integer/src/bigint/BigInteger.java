@@ -83,11 +83,12 @@ public class BigInteger {
 
 		// Count the leading zeros
 		try {
-			while (zeroCounter < integer.length() && integer.charAt(zeroCounter) == '0' || integer.charAt(zeroCounter + 1) == '0' && (integer.charAt(zeroCounter) == '+' || integer.charAt(zeroCounter) == '-')) {
-						zeroCounter++;
+			while (zeroCounter < integer.length() && integer.charAt(zeroCounter) == '0'
+					|| integer.charAt(zeroCounter + 1) == '0'
+							&& (integer.charAt(zeroCounter) == '+' || integer.charAt(zeroCounter) == '-')) {
+				zeroCounter++;
 			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 		}
 
 		integer = integer.substring(zeroCounter, integer.length()); // If integer has leading zeros, delete them
@@ -95,13 +96,13 @@ public class BigInteger {
 		// Create the LinkedList
 		for (int i = 0; i < integer.length(); i++) {
 			if (integer.charAt(i) != '+' && integer.charAt(i) != '-') {
-				if (Character.getNumericValue((integer.charAt(i))) < 0 || Character.getNumericValue((integer.charAt(i))) > 9)
+				if (Character.getNumericValue((integer.charAt(i))) < 0
+						|| Character.getNumericValue((integer.charAt(i))) > 9)
 					throw new IllegalArgumentException();
 				intList.front = new DigitNode(Character.getNumericValue((integer.charAt(i))), intList.front);
 				intList.numDigits++;
-			}
-			else {
-				if(i != 0)
+			} else {
+				if (i != 0)
 					throw new IllegalArgumentException();
 			}
 		}
@@ -331,7 +332,20 @@ public class BigInteger {
 			if (borrow != 0) {
 				resultptr.next = new DigitNode(borrow, null);
 			}
-			
+			DigitNode zeroPtr = result.front;
+			boolean allZero = false;
+			while (zeroPtr != null) {
+				if (zeroPtr.digit == 0) {
+					allZero = true;
+				} else {
+					allZero = false;
+				}
+				zeroPtr = zeroPtr.next;
+			}
+			if (allZero) {
+				result.front = new DigitNode(0, null);
+				result.negative = false;
+			}
 
 			return result;
 		}
@@ -350,11 +364,62 @@ public class BigInteger {
 	 *         integers
 	 */
 	public static BigInteger multiply(BigInteger first, BigInteger second) {
+		BigInteger result = new BigInteger();
+		BigInteger tempresult = new BigInteger();
+		BigInteger othertempresult = new BigInteger();
+		DigitNode ptr1 = first.front;
+		DigitNode ptr2 = second.front;
+		DigitNode resultptr = result.front;
+		int carry = 0;
+		int zeroCounter = 0;
 
-		/* IMPLEMENT THIS METHOD */
+		while (ptr1 != null && ptr2 != null) {
+			for(int i = 0; i < zeroCounter; i++) {
+				result.front = new DigitNode(0, result.front);
+			}
+			resultptr = result.front;
+			if (result.front == null) {
+				if (ptr1.digit * ptr2.digit >= 10) {
+					result.front = new DigitNode((ptr1.digit * ptr2.digit) % 10, null);
+					resultptr = result.front;
+					carry = (ptr1.digit * ptr2.digit) / 10;
+				} else {
+					result.front = new DigitNode(ptr1.digit * ptr2.digit + carry, null);
+					resultptr = result.front;
+					carry = 0;
+				}
 
-		// following line is a placeholder for compilation
-		return null;
+			} else {
+				if (ptr1.digit * ptr2.digit >= 10) {
+					resultptr.next = new DigitNode((ptr1.digit * ptr2.digit) % 10, null);
+					resultptr = resultptr.next;
+					carry = (ptr1.digit * ptr2.digit) / 10;
+				} else {
+					resultptr.next = new DigitNode(ptr1.digit * ptr2.digit + carry, null);
+					resultptr = resultptr.next;
+					carry = 0;
+				}
+			}
+			if(ptr1 != null)
+				ptr1 = ptr1.next;
+			if(ptr1 == null) {
+				if(ptr2.next != null) {
+					ptr2 = ptr2.next;
+					ptr1 = first.front;
+					zeroCounter++;
+					/*
+					 * Clone to a temporary linked list to add to for each round of multiplication
+					tempresult = BigInteger.add(tempresult, result);
+					result.front = null;
+					*/
+									
+				}
+			}
+			
+			
+		}
+		result = tempresult;
+		return result;
 	}
 
 	/*
