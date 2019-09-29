@@ -374,6 +374,30 @@ public class BigInteger {
 				result.front = new DigitNode(0, null);
 				result.negative = false;
 			}
+			
+			DigitNode zeroptr = result.front;
+			int zeroCounter = 0;
+			int nonZero = 0;
+			while (zeroptr != null) {
+				if(zeroptr.digit == 0) {
+					zeroCounter++;
+				}
+				else {
+					nonZero = zeroCounter;
+				}
+				zeroptr = zeroptr.next;
+			}
+			zeroptr = result.front;
+			zeroCounter = 0;
+			while (zeroptr != null) {
+				if(zeroCounter == nonZero) {
+					zeroptr.next = null;
+				}
+				zeroptr = zeroptr.next;
+			}
+			if(result.front.digit == 0 && result.front.next == null) {
+				result.front = null;
+			}
 
 			return result;
 		}
@@ -464,6 +488,7 @@ public class BigInteger {
 		result = tempresult;
 		if((!first.negative && second.negative) ||  (first.negative && !second.negative))
 			result.negative = true;
+		
 		return result;
 	}	
 
