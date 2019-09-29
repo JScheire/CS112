@@ -394,7 +394,7 @@ public class BigInteger {
 	public static BigInteger multiply(BigInteger first, BigInteger second) {
 		BigInteger result = new BigInteger();
 		BigInteger tempresult = new BigInteger();
-		BigInteger copyresult = new BigInteger();
+
 		DigitNode ptr1 = first.front;
 		DigitNode ptr2 = second.front;
 		DigitNode resultptr = result.front;
@@ -437,30 +437,23 @@ public class BigInteger {
 				if(ptr2.next != null) {
 					ptr2 = ptr2.next;
 					ptr1 = first.front;
-					zeroCounter++;
+					zeroCounter++;				
+					tempresult = BigInteger.add(tempresult, result);
+					result = new BigInteger();
+					DigitNode zeroptr = result.front;
 					
-					DigitNode tempptr1 = result.front;
-					DigitNode tempptr2 = copyresult.front;
-					int start = 0;
-					while (tempptr1 != null) {
-						if(start == 0) {
-							copyresult.front = new DigitNode(tempptr1.digit, null);
-							tempptr1 = tempptr1.next;
-							start++;
-							
+					for(int i = 0; i < zeroCounter; i++) {
+						if(zeroptr == null) {
+							result.front = new DigitNode(0, null);
+							zeroptr = result.front;
+							resultptr = zeroptr;
 						}
 						else {
-							tempptr2.next = new DigitNode(tempptr1.digit, null);
-							tempptr1 = tempptr1.next;
-							tempptr2 = tempptr2.next;
+							zeroptr.next = new DigitNode(0, null);
+							zeroptr = zeroptr.next;
+							resultptr = zeroptr;
 						}
 					}
-					tempresult = BigInteger.add(tempresult, copyresult);
-					result.front = null;
-					for(int i = 0; i < zeroCounter; i++) {
-						result.front = new DigitNode(0, result.front);
-						resultptr = result.front;
-					}	
 									
 				}
 			}
@@ -469,8 +462,10 @@ public class BigInteger {
 		}
 		tempresult = BigInteger.add(tempresult, result);
 		result = tempresult;
+		if((!first.negative && second.negative) ||  (first.negative && !second.negative))
+			result.negative = true;
 		return result;
-	}
+	}	
 
 	/*
 	 * (non-Javadoc)
