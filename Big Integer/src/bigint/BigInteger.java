@@ -366,7 +366,7 @@ public class BigInteger {
 	public static BigInteger multiply(BigInteger first, BigInteger second) {
 		BigInteger result = new BigInteger();
 		BigInteger tempresult = new BigInteger();
-		BigInteger othertempresult = new BigInteger();
+		BigInteger copyresult = new BigInteger();
 		DigitNode ptr1 = first.front;
 		DigitNode ptr2 = second.front;
 		DigitNode resultptr = result.front;
@@ -376,8 +376,8 @@ public class BigInteger {
 		while (ptr1 != null && ptr2 != null) {
 			for(int i = 0; i < zeroCounter; i++) {
 				result.front = new DigitNode(0, result.front);
-			}
-			resultptr = result.front;
+				resultptr = result.front;
+			}			
 			if (result.front == null) {
 				if (ptr1.digit * ptr2.digit >= 10) {
 					result.front = new DigitNode((ptr1.digit * ptr2.digit) % 10, null);
@@ -407,11 +407,24 @@ public class BigInteger {
 					ptr2 = ptr2.next;
 					ptr1 = first.front;
 					zeroCounter++;
-					/*
-					 * Clone to a temporary linked list to add to for each round of multiplication
-					tempresult = BigInteger.add(tempresult, result);
+					
+					DigitNode tempptr1 = result.front;
+					DigitNode tempptr2 = copyresult.front;
+					while (tempptr1 != null) {
+						if(tempptr2 == null) {
+							copyresult.front = new DigitNode(tempptr1.digit, null);
+							tempptr1 = tempptr1.next;
+							tempptr2 = copyresult.front;
+							
+						}
+						else {
+							tempptr2.next = new DigitNode(tempptr1.digit, null);
+							tempptr1 = tempptr1.next;
+							tempptr2 = tempptr2.next;
+						}
+					}
+					tempresult = BigInteger.add(tempresult, copyresult);
 					result.front = null;
-					*/
 									
 				}
 			}
