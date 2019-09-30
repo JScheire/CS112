@@ -379,21 +379,20 @@ public class BigInteger {
 			int zeroCounter = 0;
 			int nonZero = 0;
 			while (zeroptr != null) {
-				if(zeroptr.digit == 0) {
-					zeroCounter++;
-				}
-				else {
+				if(zeroptr.digit != 0)
 					nonZero = zeroCounter;
-				}
+				zeroCounter++;
 				zeroptr = zeroptr.next;
 			}
 			zeroptr = result.front;
 			zeroCounter = 0;
 			while (zeroptr != null) {
-				if(zeroCounter == nonZero) {
+				if(zeroCounter == nonZero && (zeroCounter != 0 && nonZero != 0)) {
 					zeroptr.next = null;
+					break;
 				}
 				zeroptr = zeroptr.next;
+				zeroCounter++;
 			}
 			if(result.front.digit == 0 && result.front.next == null) {
 				result.front = null;
