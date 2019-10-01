@@ -77,6 +77,11 @@ public class BigInteger {
 		} else {
 			intList.negative = false;
 		}
+		
+		if(integer.equals("-") || integer.equals("+")) {
+			throw new IllegalArgumentException();
+		}
+			
 
 		int zeroCounter = 0;
 		intList.front = null;
