@@ -62,12 +62,14 @@ public class BigInteger {
 	 */
 	public static BigInteger parse(String integer) throws IllegalArgumentException {
 
+		BigInteger intList = new BigInteger();
+		
 		// Check for empty string input
 		if ("".equals(integer)) {
-			throw new IllegalArgumentException();
+			//throw new IllegalArgumentException();
+			intList.front = null;
+			return intList;
 		}
-
-		BigInteger intList = new BigInteger();
 
 		// If integer has non integer values, throw exception
 
