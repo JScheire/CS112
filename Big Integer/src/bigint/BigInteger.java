@@ -66,9 +66,7 @@ public class BigInteger {
 		
 		// Check for empty string input
 		if ("".equals(integer)) {
-			//throw new IllegalArgumentException();
-			intList.front = null;
-			return intList;
+			throw new IllegalArgumentException();
 		}
 
 		// If integer has non integer values, throw exception
@@ -181,6 +179,10 @@ public class BigInteger {
 			if (carry != 0) {
 				resultptr.next = new DigitNode(carry, null);
 			}
+			
+			String stringresult = result.toString();
+			result = BigInteger.parse(stringresult);
+			
 			return result;
 		}
 		// negatives
@@ -261,6 +263,7 @@ public class BigInteger {
 							}
 							else {
 								resultptr.next = new DigitNode(9, null);
+								borrow = 0;
 								borrow++;
 							}
 						} else {
@@ -282,7 +285,6 @@ public class BigInteger {
 							}
 							else {
 								resultptr.next = new DigitNode(9, null);
-								borrow++;
 							}
 						} else {
 							if(first.negative && second.negative) {
@@ -310,7 +312,6 @@ public class BigInteger {
 								if (greaterptr.digit == 0) {
 									if (borrow != 0) {
 										resultptr.next = new DigitNode(9 - lessptr.digit, null);
-										borrow = 0;
 									} else {
 										resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
 										borrow++;
@@ -404,7 +405,11 @@ public class BigInteger {
 			if(result.front.digit == 0 && result.front.next == null) {
 				result.front = null;
 			}
-
+			
+			
+			String stringresult = result.toString();
+			result = BigInteger.parse(stringresult);
+			
 			return result;
 		}
 
@@ -430,6 +435,17 @@ public class BigInteger {
 		DigitNode resultptr = result.front;
 		int carry = 0;
 		int zeroCounter = 0;
+		
+		if(first.numDigits == 1 && second.numDigits == 1) {
+			result.front = new DigitNode((ptr1.digit * ptr2.digit) % 10, null);
+			resultptr = result.front;
+			carry = (ptr1.digit * ptr2.digit) / 10;
+			resultptr.next = new DigitNode(carry, null);
+			ptr1 = ptr1.next;
+			ptr2 = ptr2.next;
+
+		}
+		
 
 		while (ptr1 != null && ptr2 != null) {		
 			if (result.front == null) {
@@ -494,6 +510,9 @@ public class BigInteger {
 		result = tempresult;
 		if((!first.negative && second.negative) ||  (first.negative && !second.negative))
 			result.negative = true;
+		
+		String stringresult = result.toString();
+		result = BigInteger.parse(stringresult);
 		
 		return result;
 	}	
