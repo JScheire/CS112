@@ -68,6 +68,8 @@ public class BigInteger {
 		if ("".equals(integer)) {
 			throw new IllegalArgumentException();
 		}
+		
+		integer = integer.trim();
 
 		// If integer has non integer values, throw exception
 
