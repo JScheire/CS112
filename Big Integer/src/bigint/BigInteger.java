@@ -111,6 +111,9 @@ public class BigInteger {
 					throw new IllegalArgumentException();
 			}
 		}
+		if(intList.front == null) {
+			intList.negative = false;
+		}
 		return intList;
 	}
 
@@ -137,7 +140,7 @@ public class BigInteger {
 			return result = second;
 		if (second.front == null)
 			return result = first;
-		if (!first.negative && !second.negative) {
+		if ((!first.negative && !second.negative) || (first.negative && second.negative)) {
 			while (ptr1 != null || ptr2 != null) {
 				if (result.front == null) {
 					if (ptr1.digit + ptr2.digit >= 10) {
@@ -151,13 +154,26 @@ public class BigInteger {
 					}
 				} else {
 					if (ptr1 == null) {
-						resultptr.next = new DigitNode(ptr2.digit + carry, null);
-						resultptr = resultptr.next;
-						carry = 0;
+						if (ptr2.digit + carry >= 10) {
+							resultptr.next = new DigitNode((ptr2.digit + carry) - 10, null);
+							resultptr = resultptr.next;
+						}
+						else {
+							resultptr.next = new DigitNode(ptr2.digit + carry, null);
+							resultptr = resultptr.next;
+							carry = 0;
+						}
 					} else if (ptr2 == null) {
-						resultptr.next = new DigitNode(ptr1.digit + carry, null);
-						resultptr = resultptr.next;
-						carry = 0;
+						if (ptr1.digit + carry >= 10) {
+							resultptr.next = new DigitNode((ptr1.digit + carry) - 10, null);
+							resultptr = resultptr.next;
+						}
+						else {
+							resultptr.next = new DigitNode(ptr1.digit + carry, null);
+							resultptr = resultptr.next;
+							carry = 0;
+						}
+						
 					} else {
 						if (ptr1.digit + ptr2.digit + carry >= 10) {
 							resultptr.next = new DigitNode((ptr1.digit + ptr2.digit + carry) - 10, null);
@@ -178,6 +194,10 @@ public class BigInteger {
 			}
 			if (carry != 0) {
 				resultptr.next = new DigitNode(carry, null);
+			}
+			
+			if(first.negative && second.negative) {
+				result.negative = true;
 			}
 			
 			String stringresult = result.toString();
@@ -220,52 +240,29 @@ public class BigInteger {
 			while (greaterptr != null || lessptr != null) {
 				if (result.front == null) {
 					if (greaterptr.digit - lessptr.digit < 0) {
-						if (first.negative && second.negative) {
-							result.front = new DigitNode((greaterptr.digit + lessptr.digit) - 10, null);
-							borrow++;
-						} else {
-							if (greaterptr.digit == 0) {
-								if (borrow != 0) {
-									result.front = new DigitNode(9 - lessptr.digit, null);
-									borrow = 0;
-								} else {
-									result.front = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
-									borrow++;
-								}
+						if (greaterptr.digit == 0) {
+							if (borrow != 0) {
+								result.front = new DigitNode(9 - lessptr.digit, null);
+								borrow = 0;
 							} else {
 								result.front = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
 								borrow++;
 							}
+						} else {
+							result.front = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
+							borrow++;
 						}
 						resultptr = result.front;
 					} else {
-						if (first.negative && second.negative) {
-							if (greaterptr.digit + lessptr.digit >= 10) {
-								result.front = new DigitNode((greaterptr.digit + lessptr.digit) - 10, null);
-								borrow++;
-							} else {
-								result.front = new DigitNode(greaterptr.digit + lessptr.digit + borrow, null);
-								borrow = 0;
-							}
-						} else {
-							result.front = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
-							borrow = 0;
-						}
+						result.front = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
+						borrow = 0;
 						resultptr = result.front;
 
 					}
 				} else {
 					if (greaterptr == null) {
-						if (lessptr.digit == 0) {
-							if(first.negative && second.negative) {
-								resultptr.next = new DigitNode(lessptr.digit + borrow, null);
-								borrow = 0;
-							}
-							else {
+						if (lessptr.digit == 0 && borrow == 1) {
 								resultptr.next = new DigitNode(9, null);
-								borrow = 0;
-								borrow++;
-							}
 						} else {
 							if(first.negative && second.negative) {
 								resultptr.next = new DigitNode(lessptr.digit + borrow, null);
@@ -278,80 +275,45 @@ public class BigInteger {
 						}
 						resultptr = resultptr.next;
 					} else if (lessptr == null) {
-						if (greaterptr.digit == 0) {
-							if(first.negative && second.negative) {
-								resultptr.next = new DigitNode(greaterptr.digit + borrow, null);
-								borrow = 0;
-							}
-							else {
-								resultptr.next = new DigitNode(9, null);
-							}
+						if (greaterptr.digit == 0 && borrow == 1) {
+							resultptr.next = new DigitNode(9, null);
 						} else {
-							if(first.negative && second.negative) {
-								resultptr.next = new DigitNode(greaterptr.digit + borrow, null);
-								borrow = 0;
-							}
-							else {
-								resultptr.next = new DigitNode(greaterptr.digit - borrow, null);
-								borrow = 0;
-							}
+							resultptr.next = new DigitNode(greaterptr.digit - borrow, null);
+							borrow = 0;
 						}
 						resultptr = resultptr.next;
 					} else {
 						if (greaterptr.digit - lessptr.digit < 0) {
-							if (first.negative && second.negative) {
-								if (greaterptr.digit + lessptr.digit + borrow >= 10) {
-									resultptr.next = new DigitNode((greaterptr.digit + lessptr.digit + borrow) - 10, null);
-									borrow = 0;
-									borrow++;
+							if (greaterptr.digit == 0) {
+								if (borrow != 0) {
+									resultptr.next = new DigitNode(9 - lessptr.digit, null);
 								} else {
-									resultptr.next = new DigitNode(greaterptr.digit + lessptr.digit + borrow, null);
-									borrow = 0;
+									resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
+									borrow++;
 								}
 							} else {
-								if (greaterptr.digit == 0) {
-									if (borrow != 0) {
-										resultptr.next = new DigitNode(9 - lessptr.digit, null);
+								if (borrow != 0) {
+									if (greaterptr.digit - lessptr.digit - borrow < 0) {
+										resultptr.next = new DigitNode(
+												(greaterptr.digit - lessptr.digit) + 10 - borrow, null);
 									} else {
-										resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
-										borrow++;
+										resultptr.next = new DigitNode(
+												(greaterptr.digit - lessptr.digit) + 10 - borrow, null);
+										borrow = 0;
 									}
 								} else {
-									if (borrow != 0) {
-										if (greaterptr.digit - lessptr.digit - borrow < 0) {
-											resultptr.next = new DigitNode(
-													(greaterptr.digit - lessptr.digit) + 10 - borrow, null);
-										} else {
-											resultptr.next = new DigitNode(
-													(greaterptr.digit - lessptr.digit) + 10 - borrow, null);
-											borrow = 0;
-										}
-									} else {
-										resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
-										borrow++;
-									}
+									resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10, null);
+									borrow++;
 								}
 							}
 							resultptr = resultptr.next;
 						} else {
-							if (first.negative && second.negative) {
-								if (greaterptr.digit + lessptr.digit + borrow >= 10) {
-									resultptr.next = new DigitNode((greaterptr.digit + lessptr.digit + borrow) - 10, null);
-									borrow = 0;
-									borrow++;
-								} else {
-									resultptr.next = new DigitNode(greaterptr.digit + lessptr.digit + borrow, null);
-									borrow = 0;
-								}
-
+							if (greaterptr.digit - lessptr.digit - borrow < 0) {
+								resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10 - borrow,
+										null);
 							} else {
-								if (greaterptr.digit - lessptr.digit - borrow < 0) {
-									resultptr.next = new DigitNode((greaterptr.digit - lessptr.digit) + 10 - borrow,
-											null);
-								} else {
-									resultptr.next = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
-									borrow = 0;
-								}
+								resultptr.next = new DigitNode(greaterptr.digit - lessptr.digit - borrow, null);
+								borrow = 0;
 							}
 							resultptr = resultptr.next;
 
@@ -407,8 +369,8 @@ public class BigInteger {
 			}
 			
 			
-			String stringresult = result.toString();
-			result = BigInteger.parse(stringresult);
+			//String stringresult = result.toString();
+			//result = BigInteger.parse(stringresult);
 			
 			return result;
 		}
