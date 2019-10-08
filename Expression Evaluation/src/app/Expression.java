@@ -26,14 +26,14 @@ public class Expression {
 		StringTokenizer str = new StringTokenizer(expr, delims);
 		while (str.hasMoreTokens()) {
 			String temp = str.nextToken();
-			System.out.println(temp);
 			int i = expr.indexOf(temp);
-			if (Character.isLetter(temp.charAt(i))) {
+			if (Character.isLetter(expr.charAt(i)) && !(vars.contains(new Variable(temp)) && !(arrays.contains(new Array(temp))))) {
 				try {
-					if (temp.charAt(i + 1) == '[') {
+					if (expr.charAt(i + 1) == '[') {
 						Array tempArr = new Array(temp);
 						arrays.add(tempArr);
-					} else {
+					} 
+					else {
 						Variable tempVar = new Variable(temp);
 						vars.add(tempVar);
 					}
