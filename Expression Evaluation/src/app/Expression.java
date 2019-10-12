@@ -8,26 +8,6 @@ import structures.Stack;
 
 public class Expression {
 
-	static class Node {
-		int data;
-		Node l, r;
-
-		Node(int data) {
-			this.data = data;
-			l = null;
-			r = null;
-		}
-	}
-
-	static class ExpressionTree {
-		Node root;
-
-		ExpressionTree() {
-			root = null;
-		}
-
-	}
-
 	private static float evaluateTree(Node root) {
 
 		if (root == null) {
@@ -136,6 +116,26 @@ public class Expression {
 	 * @return Result of evaluation
 	 */
 	public static float evaluate(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
+		
+		class Node {
+			int data;
+			Node l, r;
+
+			Node(int data) {
+				this.data = data;
+				l = null;
+				r = null;
+			}
+		}
+		
+		class ExpressionTree {
+			Node root;
+
+			ExpressionTree() {
+				root = null;
+			}
+
+		}
 
 		StringTokenizer str = new StringTokenizer(expr);
 		String numString = "";
