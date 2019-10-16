@@ -125,87 +125,66 @@ public class Expression {
 				root = null;
 			}
 
+			/*
+			 * class Queue<T> { Node rear;
+			 * 
+			 * Queue() { rear = null; }
+			 * 
+			 * public void enqueue(T item) { Node newItem = new Node(item, null); if (rear
+			 * == null) { newItem.next = newItem; } else { newItem.next = rear.next;
+			 * rear.next = newItem; } }
+			 * 
+			 * public int dequeue(){ int data = rear.next.data; if (rear == rear.next) {
+			 * rear = null; } else { rear.next = rear.next.next; }
+			 * 
+			 * return data; }
+			 */
+
 		}
 
-		class Queue<T> {
-			Node rear;
-
-			Queue() {
-				rear = null;
-			}
-
-			public void enqueue(T item) {
-				Node newItem = new Node(item, null);
-				if (rear == null) {
-					newItem.next = newItem;
+		StringTokenizer str = new StringTokenizer(expr);;
+		Stack<String> operator = new Stack<String>();
+		Stack<String> output = new Stack<String>();
+		while (str.hasMoreTokens()) {
+			String token = str.nextToken();
+			if (token.equals("+") || token.equals("-")) {
+				if (operator.peek().equals("*") || operator.peek().equals("/")) {
+					String tempop = operator.pop();
+					operator.push(token);
+					operator.push(tempop);
 				} else {
-					newItem.next = rear.next;
-					rear.next = newItem;
+					operator.push(token);
 				}
+
+			} else if (token.equals("*") || token.equals("/")) {
+				operator.push(token);
+			} else if (token.equals("(")) {
+				operator.push(token);
 			}
-			
-			public int dequeue(){
-				int data = rear.next.data;
-				if (rear == rear.next) {
-					rear = null;
+
+			else if (token.equals(")")) {
+				while (!(operator.peek().equals("("))) {
+					output.push(operator.pop());
 				}
-				else {
-					rear.next = rear.next.next;
-				}
-				
-				return data;
+				operator.pop();
 			}
-				
-				
-				
 		}
 
-	StringTokenizer str = new StringTokenizer(expr);
-	String numString = "";
-	Stack<String> operator = new Stack<String>();
-	Queue output = new Queue<String>();
-	while(str.hasMoreTokens())
-	{
-		String token = str.nextToken();
-		if(token.equals("+") || token.equals("-")) {
-			if(operator.peek().equals("*") || operator.peek().equals("/")) {
-				String tempop = operator.pop();
-				operator.push(token);
-				operator.push(tempop);
-			}
-			else {
-				operator.push(token);
-			}
-				
-		}
-		else if(token.equals("*") || token.equals("/")) {
-			operator.push(token);
-		}
-		else if(token.equals("(")) {
-			operator.push(token);
-		}
-		
-		else if(token.equals(")")) {
-			while(!(operator.peek().equals("("))){
-				output.enqueue(operator.pop());
-			}
-			operator.pop();
+		/*
+		 * if (root == null) { return 0; }
+		 * 
+		 * float leftNode = evaluateTree(root.l); float rightNode =
+		 * evaluateTree(root.r);
+		 * 
+		 * if (root.data == '+') { return leftNode + rightNode; } else if (root.data ==
+		 * '-') { return leftNode - rightNode; } else if (root.data == '*') { return
+		 * leftNode * rightNode; } else if (root.data == '/') { return leftNode /
+		 * rightNode; }
+		 */
+
+		return 0;
+
+		/** COMPLETE THIS METHOD **/
+		// following line just a placeholder for compilation
 	}
-
-	/*
-	 * if (root == null) { return 0; }
-	 * 
-	 * float leftNode = evaluateTree(root.l); float rightNode =
-	 * evaluateTree(root.r);
-	 * 
-	 * if (root.data == '+') { return leftNode + rightNode; } else if (root.data ==
-	 * '-') { return leftNode - rightNode; } else if (root.data == '*') { return
-	 * leftNode * rightNode; } else if (root.data == '/') { return leftNode /
-	 * rightNode; }
-	 */
-
-	return 0;
-
-	/** COMPLETE THIS METHOD **/
-	// following line just a placeholder for compilation
-}}
+}
