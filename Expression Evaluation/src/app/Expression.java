@@ -84,6 +84,7 @@ public class Expression {
 			}
 		}
 	}
+	
 
 	/**
 	 * Evaluates the expression.
@@ -94,97 +95,170 @@ public class Expression {
 	 * @return Result of evaluation
 	 */
 	public static float evaluate(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
-
-		class TreeNode {
-			int data;
-			TreeNode l, r;
-
-			TreeNode(int data) {
-				this.data = data;
-				l = null;
-				r = null;
-			}
-		}
-
+		
+				
 		class Node {
-			int data;
+			Character data;
 			Node next;
 
-			public Node(int data, Node next) {
+			public Node(Character data, Node next) {
 
 				this.data = data;
 				this.next = next;
 
 			}
 		}
+		class TreeNode {
+			Character data;
+			TreeNode l, r;
 
-		class ExpressionTree<TreeNode> {
-			TreeNode root;
-
-			ExpressionTree() {
-				root = null;
+			TreeNode(Character data) {
+				this.data = data;
+				l = null;
+				r = null;
 			}
-
-			/*
-			 * class Queue<T> { Node rear;
-			 * 
-			 * Queue() { rear = null; }
-			 * 
-			 * public void enqueue(T item) { Node newItem = new Node(item, null); if (rear
-			 * == null) { newItem.next = newItem; } else { newItem.next = rear.next;
-			 * rear.next = newItem; } }
-			 * 
-			 * public int dequeue(){ int data = rear.next.data; if (rear == rear.next) {
-			 * rear = null; } else { rear.next = rear.next.next; }
-			 * 
-			 * return data; }
-			 */
-
 		}
 
-		StringTokenizer str = new StringTokenizer(expr);;
-		Stack<String> operator = new Stack<String>();
-		Stack<String> output = new Stack<String>();
-		while (str.hasMoreTokens()) {
-			String token = str.nextToken();
-			if (token.equals("+") || token.equals("-")) {
-				if (operator.peek().equals("*") || operator.peek().equals("/")) {
-					String tempop = operator.pop();
+		class Queue<T> {
+			private Node rear;
+			private int size;
+
+			public Queue() {
+				rear = null;
+			}
+
+			public void enqueue(Character item) {
+				Node newItem = new Node(item, null);
+				if (rear == null) {
+					newItem.next = newItem;
+				} else {
+					newItem.next = rear.next;
+					rear.next = newItem;
+				}
+				size++;
+				rear = newItem;
+			}
+
+			public Character dequeue() throws NoSuchElementException{
+				if(rear == null) {
+					throw new NoSuchElementException("queue is empty");
+				}
+				Character data = rear.next.data;
+				if (rear == rear.next) {
+					rear = null;
+				} else {
+					rear.next = rear.next.next;
+				}
+				
+				size--;
+				return data;
+			}
+			
+			public boolean isEmpty() {
+				return size == 0;
+			}
+			
+			public Character peek() throws NoSuchElementException{
+				if(rear == null) {
+					throw new NoSuchElementException("queue is empty");
+				}
+				return rear.next.data;
+			}
+				
+
+		}
+		
+		class eval{
+			public int evaluateTree(TreeNode root) {
+				if(root == null) {
+					return 0;
+				}
+				if(root.l == null && root.r == null ) {
+					return Integer.parseInt(root.data);
+				}
+				
+				int leftSub = evaluateTree(root.l);				
+				int rightSub = evaluateTree(root.r);
+				
+				if(root.data.equals("+")) {
+					return leftSub + rightSub;
+				}
+				
+				else if(root.data.equals("-")) {
+					return leftSub - rightSub;
+				}
+				
+				else if(root.data.equals("*")) {
+					return leftSub * rightSub;
+				}
+				else {				
+					return leftSub / rightSub;
+				}
+			}
+		}
+		
+		
+		expr = expr.trim();
+
+		char str[] = expr.toCharArray();
+		Stack<Character> operator = new Stack<Character>();
+		Queue<Character> output = new Queue<Character>();
+		Stack<TreeNode> nodestack = new Stack<TreeNode>();
+		for(int i = 0; i < str.length; i++ ) {
+			char token = str[i];
+			if (token == '+' || token == '-') {
+				if (operator.peek() == '*' || operator.peek() == '/') {
+					Character tempop = operator.pop();
 					operator.push(token);
 					operator.push(tempop);
 				} else {
 					operator.push(token);
 				}
 
-			} else if (token.equals("*") || token.equals("/")) {
+			} else if (token == '*' || token == '/') {
 				operator.push(token);
-			} else if (token.equals("(")) {
+			} else if (token == '(') {
 				operator.push(token);
 			}
 
-			else if (token.equals(")")) {
-				while (!(operator.peek().equals("("))) {
-					output.push(operator.pop());
+			else if (token == ')') {
+				while (!(operator.peek() == '(')) {
+					output.enqueue(operator.pop());
 				}
 				operator.pop();
 			}
+			
+			else {
+				output.enqueue(token);
+			}
 		}
-
-		/*
-		 * if (root == null) { return 0; }
-		 * 
-		 * float leftNode = evaluateTree(root.l); float rightNode =
-		 * evaluateTree(root.r);
-		 * 
-		 * if (root.data == '+') { return leftNode + rightNode; } else if (root.data ==
-		 * '-') { return leftNode - rightNode; } else if (root.data == '*') { return
-		 * leftNode * rightNode; } else if (root.data == '/') { return leftNode /
-		 * rightNode; }
-		 */
-
-		return 0;
-
-		/** COMPLETE THIS METHOD **/
-		// following line just a placeholder for compilation
+		
+		if(!(operator.isEmpty())) {
+			output.enqueue(operator.pop());
+		}
+		
+		
+		while (!(output.isEmpty())) {
+			if (output.peek() == '+' || output.peek() == '-' || output.peek() == '*'
+					|| output.peek() == '/') {
+				TreeNode n1 = nodestack.pop();
+				TreeNode n2 = nodestack.pop();
+				TreeNode oproot = new TreeNode(output.dequeue());
+				oproot.l = n1;
+				oproot.r = n2;
+				nodestack.push(oproot);
+								
+			}
+			else {
+				nodestack.push(new TreeNode(output.dequeue()));
+			}
+		}
+		
+		eval resultInstance = new eval();
+		int result = resultInstance.evaluateTree(nodestack.pop());
+		
+		return result;
+		
+		
 	}
 }
