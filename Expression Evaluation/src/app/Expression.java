@@ -174,21 +174,21 @@ public class Expression {
 					return 0;
 				}
 				if(root.l == null && root.r == null ) {
-					return Integer.parseInt(root.data);
+					return Character.getNumericValue(root.data);
 				}
 				
 				int leftSub = evaluateTree(root.l);				
 				int rightSub = evaluateTree(root.r);
 				
-				if(root.data.equals("+")) {
+				if(root.data == '+') {
 					return leftSub + rightSub;
 				}
 				
-				else if(root.data.equals("-")) {
+				else if(root.data == '-') {
 					return leftSub - rightSub;
 				}
 				
-				else if(root.data.equals("*")) {
+				else if(root.data == '*') {
 					return leftSub * rightSub;
 				}
 				else {				
