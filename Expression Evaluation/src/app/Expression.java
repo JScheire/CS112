@@ -98,10 +98,10 @@ public class Expression {
 		
 				
 		class Node {
-			Character data;
+			String data;
 			Node next;
 
-			public Node(Character data, Node next) {
+			public Node(String data, Node next) {
 
 				this.data = data;
 				this.next = next;
@@ -109,10 +109,10 @@ public class Expression {
 			}
 		}
 		class TreeNode {
-			Character data;
+			String data;
 			TreeNode l, r;
 
-			TreeNode(Character data) {
+			TreeNode(String data) {
 				this.data = data;
 				l = null;
 				r = null;
@@ -127,7 +127,7 @@ public class Expression {
 				rear = null;
 			}
 
-			public void enqueue(Character item) {
+			public void enqueue(String item) {
 				Node newItem = new Node(item, null);
 				if (rear == null) {
 					newItem.next = newItem;
@@ -139,11 +139,11 @@ public class Expression {
 				rear = newItem;
 			}
 
-			public Character dequeue() throws NoSuchElementException{
+			public String dequeue() throws NoSuchElementException{
 				if(rear == null) {
 					throw new NoSuchElementException("queue is empty");
 				}
-				Character data = rear.next.data;
+				String data = rear.next.data;
 				if (rear == rear.next) {
 					rear = null;
 				} else {
@@ -158,7 +158,7 @@ public class Expression {
 				return size == 0;
 			}
 			
-			public Character peek() throws NoSuchElementException{
+			public String peek() throws NoSuchElementException{
 				if(rear == null) {
 					throw new NoSuchElementException("queue is empty");
 				}
@@ -174,21 +174,21 @@ public class Expression {
 					return 0;
 				}
 				if(root.l == null && root.r == null ) {
-					return Character.getNumericValue(root.data);
+					return Integer.parseInt(root.data);
 				}
 				
 				int leftSub = evaluateTree(root.l);				
 				int rightSub = evaluateTree(root.r);
 				
-				if(root.data == '+') {
+				if(root.data.equals("+")) {
 					return leftSub + rightSub;
 				}
 				
-				else if(root.data == '-') {
+				else if(root.data.equals("-")) {
 					return leftSub - rightSub;
 				}
 				
-				else if(root.data == '*') {
+				else if(root.data.equals("*")) {
 					return leftSub * rightSub;
 				}
 				else {				
@@ -197,55 +197,76 @@ public class Expression {
 			}
 		}
 		
-		
 		expr = expr.trim();
+		expr = expr.replace(" ","");
 
 		char str[] = expr.toCharArray();
-		Stack<Character> operator = new Stack<Character>();
-		Queue<Character> output = new Queue<Character>();
+		String token;
+		int digitCounter = 0;
+		Stack<String> operator = new Stack<String>();
+		Queue<String> output = new Queue<String>();
 		Stack<TreeNode> nodestack = new Stack<TreeNode>();
 		for(int i = 0; i < str.length; i++ ) {
-			char token = str[i];
-			if (token == '+' || token == '-') {
-				if (operator.peek() == '*' || operator.peek() == '/') {
-					Character tempop = operator.pop();
+			token = Character.toString(str[i]);
+			if (token.equals("+") || token.equals("-")) {
+				if(operator.isEmpty()){
+					operator.push(token);
+				}
+				else if (operator.peek().equals("*") || operator.peek().equals("/")) {
+					String tempop = operator.pop();
 					operator.push(token);
 					operator.push(tempop);
 				} else {
 					operator.push(token);
 				}
 
-			} else if (token == '*' || token == '/') {
+			} else if (token.equals("*")|| token.equals("/")) {
 				operator.push(token);
-			} else if (token == '(') {
+			} else if (token.equals("(")) {
 				operator.push(token);
 			}
 
-			else if (token == ')') {
-				while (!(operator.peek() == '(')) {
+			else if (token.equals(")")) {
+				while (!(operator.peek().equals("("))) {
 					output.enqueue(operator.pop());
 				}
 				operator.pop();
 			}
 			
 			else {
-				output.enqueue(token);
+				try {
+					while(digitCounter < expr.length() && Character.isDigit(expr.charAt(digitCounter + i))) {
+						digitCounter++;
+					}
+				}
+				catch(Exception e) {
+					
+				}
+				if(i - digitCounter == 1 || digitCounter - i == 1) {
+					output.enqueue(token);
+				}
+				else {
+					token = expr.substring(i, i + digitCounter);
+					output.enqueue(token);
+				}
+				i += digitCounter - 1;
+				digitCounter = 0;
 			}
 		}
 		
-		if(!(operator.isEmpty())) {
+		while(!(operator.isEmpty())) {
 			output.enqueue(operator.pop());
 		}
 		
 		
 		while (!(output.isEmpty())) {
-			if (output.peek() == '+' || output.peek() == '-' || output.peek() == '*'
-					|| output.peek() == '/') {
+			if (output.peek().equals("+") || output.peek().equals("-") || output.peek().equals("*")
+					|| output.peek().equals("/")) {
 				TreeNode n1 = nodestack.pop();
 				TreeNode n2 = nodestack.pop();
 				TreeNode oproot = new TreeNode(output.dequeue());
-				oproot.l = n1;
-				oproot.r = n2;
+				oproot.r = n1;
+				oproot.l = n2;
 				nodestack.push(oproot);
 								
 			}
