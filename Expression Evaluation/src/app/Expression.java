@@ -37,10 +37,13 @@ public class Expression {
 						vars.add(tempVar);
 					}
 				} catch (Exception e) {
+					Variable tempVar = new Variable(temp);
+					vars.add(tempVar);
 
 				}
 			}
 		}
+		
 	}
 
 	/**
@@ -84,6 +87,8 @@ public class Expression {
 			}
 		}
 	}
+	
+	//Replaces all variables with literals/numbers
 	
 
 	/**
@@ -202,6 +207,7 @@ public class Expression {
 
 		char str[] = expr.toCharArray();
 		String token;
+		int parencounter = 0;
 		int digitCounter = 0;
 		Stack<String> operator = new Stack<String>();
 		Queue<String> output = new Queue<String>();
@@ -213,9 +219,8 @@ public class Expression {
 					operator.push(token);
 				}
 				else if (operator.peek().equals("*") || operator.peek().equals("/")) {
-					String tempop = operator.pop();
+					output.enqueue(operator.pop());
 					operator.push(token);
-					operator.push(tempop);
 				} else {
 					operator.push(token);
 				}
@@ -224,6 +229,7 @@ public class Expression {
 				operator.push(token);
 			} else if (token.equals("(")) {
 				operator.push(token);
+				parencounter++;
 			}
 
 			else if (token.equals(")")) {
@@ -232,6 +238,74 @@ public class Expression {
 				}
 				operator.pop();
 			}
+			
+			
+			else if(Character.isLetter(expr.charAt(i))) {
+				int lettercounter = 0;
+				String var = "";
+				while(Character.isLetter(expr.charAt(lettercounter + i))){
+					var = var + expr.charAt(lettercounter + i);
+					lettercounter++;
+					if(lettercounter + i >= expr.length()) {
+						break;
+					}
+				}
+				if(!(lettercounter + i >= expr.length())){
+					if(expr.charAt(i + 1) == '[') {
+						int lastbracket = 0;
+						int counter = 0;
+						for(int p = 0; p < expr.length(); p++) {
+							if(expr.charAt(p) == '[') {
+								counter++;
+							}
+							if(expr.charAt(p) == ']') {
+								counter--;
+							}
+							if(counter == 0) {
+								lastbracket = p;
+							}
+						}
+						
+						
+						String innerexpr = expr.substring(i + 2, lastbracket);
+						int innerexprval = (int) evaluate(innerexpr, vars, arrays); 
+						for(int k = 0; k < arrays.size(); k++) {
+							if(arrays.get(k).name.equals(var)) {
+								output.enqueue(Integer.toString(arrays.get(k).values[innerexprval]));
+								break;
+							}
+						}
+						i+=lastbracket;
+						
+						
+					}
+					else {			
+						for(int j = 0; j < vars.size(); j++) {
+							if(vars.get(j).name.equals(var)) {
+								output.enqueue(Integer.toString(vars.get(j).value));
+								break;
+							}
+						}		
+					}
+				}
+				else {
+					for(int j = 0; j < vars.size(); j++) {
+						if(vars.get(j).name.equals(var)) {
+							output.enqueue(Integer.toString(vars.get(j).value));
+							break;
+						}
+					}
+				}
+				
+				i+=lettercounter - 1;
+				
+				
+				
+						
+			}
+			
+			
+			
 			
 			else {
 				try {
@@ -242,8 +316,9 @@ public class Expression {
 				catch(Exception e) {
 					
 				}
-				if(i - digitCounter == 1 || digitCounter - i == 1) {
+				if(i - digitCounter - parencounter == 1 || digitCounter - i - parencounter == 1) {
 					output.enqueue(token);
+					parencounter = 0;
 				}
 				else {
 					token = expr.substring(i, i + digitCounter);
