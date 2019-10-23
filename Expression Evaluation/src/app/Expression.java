@@ -23,13 +23,15 @@ public class Expression {
 	 */
 	public static void makeVariableLists(String expr, ArrayList<Variable> vars, ArrayList<Array> arrays) {
 		StringTokenizer str = new StringTokenizer(expr, delims);
+		int counter = 0;
 		while (str.hasMoreTokens()) {
 			String temp = str.nextToken();
-			int i = expr.indexOf(temp);
+			int i = expr.indexOf(temp, counter);
+			counter = i;
 			if (Character.isLetter(expr.charAt(i))
-					&& !(vars.contains(new Variable(temp)) && !(arrays.contains(new Array(temp))))) {
+					&& !(vars.contains(new Variable(temp))) && !(arrays.contains((new Array(temp))))) {				
 				try {
-					if (expr.charAt(i + 1) == '[') {
+					if (expr.charAt(i + temp.length()) == '[') {
 						Array tempArr = new Array(temp);
 						arrays.add(tempArr);
 					} else {
@@ -43,7 +45,8 @@ public class Expression {
 				}
 			}
 		}
-		
+		System.out.println(vars);
+		System.out.println(arrays);
 	}
 
 	/**
@@ -56,9 +59,7 @@ public class Expression {
 	 * @param arrays The arrays array list - previously populated by
 	 *               makeVariableLists
 	 */
-	public static void
-
-			loadVariableValues(Scanner sc, ArrayList<Variable> vars, ArrayList<Array> arrays) throws IOException {
+	public static void loadVariableValues(Scanner sc, ArrayList<Variable> vars, ArrayList<Array> arrays) throws IOException {
 		while (sc.hasNextLine()) {
 			StringTokenizer st = new StringTokenizer(sc.nextLine().trim());
 			int numTokens = st.countTokens();
@@ -174,7 +175,7 @@ public class Expression {
 		}
 		
 		class eval{
-			public int evaluateTree(TreeNode root) {
+			public float evaluateTree(TreeNode root) {
 				if(root == null) {
 					return 0;
 				}
@@ -182,8 +183,8 @@ public class Expression {
 					return Integer.parseInt(root.data);
 				}
 				
-				int leftSub = evaluateTree(root.l);				
-				int rightSub = evaluateTree(root.r);
+				float leftSub = evaluateTree(root.l);				
+				float rightSub = evaluateTree(root.r);
 				
 				if(root.data.equals("+")) {
 					return leftSub + rightSub;
@@ -218,9 +219,19 @@ public class Expression {
 				if(operator.isEmpty()){
 					operator.push(token);
 				}
-				else if (operator.peek().equals("*") || operator.peek().equals("/")) {
+				else if(operator.peek().equals("-")) {
 					output.enqueue(operator.pop());
 					operator.push(token);
+				}
+				else if (operator.peek().equals("*") || operator.peek().equals("/")) {
+					output.enqueue(operator.pop());
+					if(operator.peek().equals("-")){
+						output.enqueue(operator.pop());
+						operator.push(token);
+					}
+					else {
+						operator.push(token);
+					}
 				} else {
 					operator.push(token);
 				}
@@ -250,11 +261,12 @@ public class Expression {
 						break;
 					}
 				}
-				if(!(lettercounter + i >= expr.length())){
+				i+=lettercounter - 1;
+				if(!(i + 2 > expr.length())){
 					if(expr.charAt(i + 1) == '[') {
 						int lastbracket = 0;
 						int counter = 0;
-						for(int p = 0; p < expr.length(); p++) {
+						for(int p = i; p < expr.length(); p++) {
 							if(expr.charAt(p) == '[') {
 								counter++;
 							}
@@ -263,6 +275,10 @@ public class Expression {
 							}
 							if(counter == 0) {
 								lastbracket = p;
+								parencounter = 0;
+								if(i - p != 0) {
+									break;
+								}
 							}
 						}
 						
@@ -275,10 +291,10 @@ public class Expression {
 								break;
 							}
 						}
-						i+=lastbracket;
-						
-						
+						i=lastbracket;
 					}
+					
+					
 					else {			
 						for(int j = 0; j < vars.size(); j++) {
 							if(vars.get(j).name.equals(var)) {
@@ -296,11 +312,6 @@ public class Expression {
 						}
 					}
 				}
-				
-				i+=lettercounter - 1;
-				
-				
-				
 						
 			}
 			
@@ -314,9 +325,8 @@ public class Expression {
 					}
 				}
 				catch(Exception e) {
-					
 				}
-				if(i - digitCounter - parencounter == 1 || digitCounter - i - parencounter == 1) {
+				if(digitCounter - parencounter == 1 || parencounter - digitCounter == 1) {
 					output.enqueue(token);
 					parencounter = 0;
 				}
@@ -327,6 +337,7 @@ public class Expression {
 				i += digitCounter - 1;
 				digitCounter = 0;
 			}
+			
 		}
 		
 		while(!(operator.isEmpty())) {
@@ -351,7 +362,7 @@ public class Expression {
 		}
 		
 		eval resultInstance = new eval();
-		int result = resultInstance.evaluateTree(nodestack.pop());
+		float result = resultInstance.evaluateTree(nodestack.pop());
 		
 		return result;
 		
