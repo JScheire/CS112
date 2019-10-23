@@ -45,8 +45,9 @@ public class Expression {
 				}
 			}
 		}
-		System.out.println(vars);
-		System.out.println(arrays);
+		
+		System.out.println(vars.size());
+		System.out.println(arrays.size());
 	}
 
 	/**
