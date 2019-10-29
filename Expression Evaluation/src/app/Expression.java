@@ -45,9 +45,6 @@ public class Expression {
 				}
 			}
 		}
-		
-		System.out.println(vars.size());
-		System.out.println(arrays.size());
 	}
 
 	/**
@@ -226,19 +223,32 @@ public class Expression {
 				}
 				else if (operator.peek().equals("*") || operator.peek().equals("/")) {
 					output.enqueue(operator.pop());
-					if(operator.peek().equals("-")){
+					if(operator.isEmpty()) {
+						operator.push(token);
+					}
+					else if(operator.peek().equals("-")){
 						output.enqueue(operator.pop());
 						operator.push(token);
 					}
 					else {
 						operator.push(token);
 					}
-				} else {
+				} 
+				else {
 					operator.push(token);
 				}
 
 			} else if (token.equals("*")|| token.equals("/")) {
-				operator.push(token);
+				if(operator.isEmpty()) {
+					operator.push(token);
+				}
+				else if(operator.peek().equals("/") || operator.peek().equals("*")) {
+					output.enqueue(operator.pop());
+					operator.push(token);
+				}
+				else {
+					operator.push(token);
+				}
 			} else if (token.equals("(")) {
 				operator.push(token);
 				parencounter++;
@@ -327,7 +337,7 @@ public class Expression {
 				}
 				catch(Exception e) {
 				}
-				if(digitCounter - parencounter == 1 || parencounter - digitCounter == 1) {
+				if(digitCounter == 1) {
 					output.enqueue(token);
 					parencounter = 0;
 				}
