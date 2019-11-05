@@ -26,29 +26,69 @@ public class Trie {
 		TrieNode root = new TrieNode(null, null, null);
 		
 		for (int i = 0; i < allWords.length; i++) {
-			String word = allWords[i];
+			TrieNode ptr = root;
+			TrieNode ptr2 = ptr;
+			TrieNode ptr2prev = null;
+			TrieNode ptrprev = null;
+			String currentWord = allWords[i];
 			short startIndex = 0;
-			short endIndex = (short) (word.length() - 1);
-			Indexes wordSub = new Indexes(i, startIndex, endIndex);
-			if(root.firstChild == null && root.sibling == null && root.substr == null) {
-				root.firstChild = new TrieNode(wordSub, null, null);
-				root = root.firstChild;
+			short endIndex = (short) ((short) (currentWord.length()) - 1);
+			Indexes index = new Indexes(i, startIndex, endIndex);
+			if(ptr.firstChild == null) {
+				ptr.firstChild = new TrieNode(index, null, null);
+				continue;
 			}
 			else {
-				while((allWords[root.substr.wordIndex]).charAt(startIndex) == allWords[i].charAt(startIndex)) {
-					startIndex++;
-				}
-				wordSub = new Indexes(i, startIndex, endIndex);
-				root.firstChild = new TrieNode(wordSub, null, null);
-				root = root.firstChild;
+				ptr = ptr.firstChild;
 			}
+			while(ptr != null) {
+				ptr2 = ptr;
+				while(ptr2 != null) {
+					while(allWords[ptr2.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex)) {
+						startIndex++;
+					}
+					ptr2prev = ptr2;
+					ptr2 = ptr2.sibling;	
+					if(startIndex != 0) {
+						break;
+					}
+				}
+				ptrprev = ptr;
+				ptr = ptr.firstChild;
+			}							
+			
+			if(startIndex == 0) {
+				if(ptr2prev.firstChild == null) {		
+					while(ptr2prev.sibling != null) {
+						ptr2prev = ptr2prev.sibling;
+					}
+					ptr2prev.sibling = new TrieNode(index, null, null);				
+				}
+			}
+			else {
+				if(ptr2prev.firstChild != null) {		
+					while(ptr2prev.sibling != null) {
+						ptr2prev = ptr2prev.sibling;
+					}
+					ptr2prev.sibling = new TrieNode(index, null, null);
+				
+				}
+				else {
+					Indexes firstIndex = new Indexes(i, startIndex, ptr2prev.substr.endIndex);
+					firstIndex.wordIndex = ptr2prev.substr.wordIndex;
+					ptr2prev.substr.endIndex = (short) (startIndex - 1);			
+					Indexes nextIndex = new Indexes(i, startIndex, endIndex);
+					ptr2prev.firstChild = new TrieNode(firstIndex, null, new TrieNode(nextIndex, null, null));
+				}
+			}		
+		
 			
 			
 		}
 		
 		// FOLLOWING LINE IS A PLACEHOLDER TO ENSURE COMPILATION
 		// MODIFY IT AS NEEDED FOR YOUR IMPLEMENTATION
-		return null;
+		return root;
 	}
 	
 	/**
