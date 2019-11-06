@@ -3,6 +3,6 @@ cat
 muscle
 pottery
 possible
-possum
-musk
 potato
+musk
+possum
