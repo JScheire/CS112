@@ -24,73 +24,48 @@ public class Trie {
 	public static TrieNode buildTrie(String[] allWords) {
 		
 		TrieNode root = new TrieNode(null, null, null);
-		
-		for (int i = 0; i < allWords.length; i++) {
-			TrieNode ptr = root;
-			TrieNode ptr2 = ptr;
-			TrieNode ptr2prev = null;
-			TrieNode ptrprev = null;
+		Indexes index = new Indexes(0, (short) 0, (short) (allWords[0].length() - 1));
+		root.firstChild = new TrieNode(index, null, null);
+		for (int i = 1; i < allWords.length; i++) {
+			TrieNode ptr = root.firstChild;
+			TrieNode prev = root;
 			String currentWord = allWords[i];
 			short startIndex = 0;
 			short endIndex = (short) ((short) (currentWord.length()) - 1);
-			Indexes index = new Indexes(i, startIndex, endIndex);
-			if(ptr.firstChild == null) {
-				ptr.firstChild = new TrieNode(index, null, null);
-				continue;
-			}
-			else {
-				ptr = ptr.firstChild;
-			}
-			while(ptr != null) {
-				ptr2 = ptr;
-				while(ptr2 != null) {
-					while(allWords[ptr2.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex)) {
-						startIndex++;
-					}
-					ptr2prev = ptr2;
-					ptr2 = ptr2.sibling;	
-					if(startIndex != 0) {
-						break;
-					}
-				}
-				ptrprev = ptr;
-				ptr = ptr.firstChild;
-			}							
+			index = new Indexes(i, startIndex, endIndex);
 			
-			if(startIndex == 0) {
-				if(ptr2prev.firstChild == null) {		
-					while(ptr2prev.sibling != null) {
-						ptr2prev = ptr2prev.sibling;
-					}
-					ptr2prev.sibling = new TrieNode(index, null, null);				
-				}
-			}
-			else {
-				if(ptr2prev.firstChild != null) {		
-					while(ptr2prev.sibling != null) {
-						ptr2prev = ptr2prev.sibling;
-					}
-					ptr2prev.sibling = new TrieNode(index, null, null);
-				
+			while(ptr != null) {
+				while(allWords[ptr.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex)) {
+					startIndex++;
+				}	
+				if(startIndex == 0) {
+					prev = ptr;
+					ptr = ptr.sibling;
 				}
 				else {
-					Indexes firstIndex = new Indexes(i, startIndex, ptr2prev.substr.endIndex);
-					firstIndex.wordIndex = ptr2prev.substr.wordIndex;
-					ptr2prev.substr.endIndex = (short) (startIndex - 1);			
-					Indexes nextIndex = new Indexes(i, startIndex, endIndex);
-					ptr2prev.firstChild = new TrieNode(firstIndex, null, new TrieNode(nextIndex, null, null));
+					prev = ptr;
+					break;
 				}
-			}		
-		
-			
-			
+			}
+									
+			if(startIndex == 0) {
+				prev.sibling = new TrieNode(index, null, null);				
+			}
+			else {
+				Indexes firstIndex = new Indexes(i, startIndex, prev.substr.endIndex);
+				firstIndex.wordIndex = prev.substr.wordIndex;
+				prev.substr.endIndex = (short) (startIndex - 1);			
+				Indexes nextIndex = new Indexes(i, startIndex, endIndex);
+				prev.firstChild = new TrieNode(firstIndex, null, new TrieNode(nextIndex, null, null));
+			}			
 		}
 		
 		// FOLLOWING LINE IS A PLACEHOLDER TO ENSURE COMPILATION
 		// MODIFY IT AS NEEDED FOR YOUR IMPLEMENTATION
 		return root;
 	}
-	
+
+
 	/**
 	 * Given a trie, returns the "completion list" for a prefix, i.e. all the leaf nodes in the 
 	 * trie whose words start with this prefix. 
