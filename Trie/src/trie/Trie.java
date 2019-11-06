@@ -27,6 +27,7 @@ public class Trie {
 		Indexes index = new Indexes(0, (short) 0, (short) (allWords[0].length() - 1));
 		root.firstChild = new TrieNode(index, null, null);
 		for (int i = 1; i < allWords.length; i++) {
+
 			TrieNode ptr = root.firstChild;
 			TrieNode prev = root;
 			String currentWord = allWords[i];
@@ -35,16 +36,22 @@ public class Trie {
 			index = new Indexes(i, startIndex, endIndex);
 			
 			while(ptr != null) {
-				while(allWords[ptr.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex)) {
+				while(allWords[ptr.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex) && startIndex - 1 < ptr.substr.endIndex) {
 					startIndex++;
-				}	
-				if(startIndex == 0) {
+				}
+				if(startIndex == 0 || startIndex == ptr.substr.startIndex) {
 					prev = ptr;
 					ptr = ptr.sibling;
 				}
 				else {
-					prev = ptr;
-					break;
+					if(startIndex - 1 == ptr.substr.endIndex) {
+						prev = ptr;
+						ptr = ptr.firstChild;
+					}
+					else {
+						prev = ptr;
+						break;
+					}
 				}
 			}
 									
@@ -52,19 +59,15 @@ public class Trie {
 				prev.sibling = new TrieNode(index, null, null);				
 			}
 			else {
-				Indexes firstIndex = new Indexes(i, startIndex, prev.substr.endIndex);
-				firstIndex.wordIndex = prev.substr.wordIndex;
+				Indexes firstIndex = new Indexes(prev.substr.wordIndex, startIndex, prev.substr.endIndex);
 				prev.substr.endIndex = (short) (startIndex - 1);			
 				Indexes nextIndex = new Indexes(i, startIndex, endIndex);
 				prev.firstChild = new TrieNode(firstIndex, null, new TrieNode(nextIndex, null, null));
-			}			
+			}
+			
 		}
-		
-		// FOLLOWING LINE IS A PLACEHOLDER TO ENSURE COMPILATION
-		// MODIFY IT AS NEEDED FOR YOUR IMPLEMENTATION
 		return root;
 	}
-
 
 	/**
 	 * Given a trie, returns the "completion list" for a prefix, i.e. all the leaf nodes in the 
