@@ -55,7 +55,7 @@ public class Trie {
 				}
 			}
 									
-			if(startIndex == 0) {
+			if(startIndex == 0 || startIndex == prev.substr.startIndex) {
 				prev.sibling = new TrieNode(index, null, null);				
 			}
 			else {
@@ -103,8 +103,15 @@ public class Trie {
 		while(ptr != null) {
 			if((allWords[ptr.substr.wordIndex].startsWith(prefix))) {
 				if(ptr.firstChild != null) {
-					ptr = ptr.firstChild;
-					nodeList.addAll(completionList(ptr, allWords, prefix));
+					nodeList.addAll(completionList(ptr.firstChild, allWords, prefix));
+				}
+				else {
+					nodeList.add(ptr);
+				}
+			}
+			else if((prefix.startsWith(allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex, ptr.substr.endIndex + 1)))) {
+				if(ptr.firstChild != null) {
+					nodeList.addAll(completionList(ptr.firstChild, allWords, prefix));
 				}
 				else {
 					nodeList.add(ptr);
