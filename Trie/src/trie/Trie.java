@@ -61,8 +61,7 @@ public class Trie {
 			else {
 				Indexes firstIndex = new Indexes(prev.substr.wordIndex, startIndex, prev.substr.endIndex);
 				prev.substr.endIndex = (short) (startIndex - 1);			
-				Indexes nextIndex = new Indexes(i, startIndex, endIndex);
-				
+				Indexes nextIndex = new Indexes(i, startIndex, endIndex);		
 				TrieNode saveFirstChild = prev.firstChild;
 				prev.firstChild = new TrieNode(firstIndex, null, null);
 				prev.firstChild.firstChild = saveFirstChild;
@@ -95,12 +94,29 @@ public class Trie {
 	public static ArrayList<TrieNode> completionList(TrieNode root,
 										String[] allWords, String prefix) {
 		
+		ArrayList<TrieNode> nodeList = new ArrayList<TrieNode>();
+		TrieNode ptr = root;
+		//if(root.firstChild == null) {
+		//	ptr = root.firstChild;
+		//}
 		
+		while(ptr != null) {
+			if((allWords[ptr.substr.wordIndex].startsWith(prefix))) {
+				if(ptr.firstChild != null) {
+					ptr = ptr.firstChild;
+					nodeList.addAll(completionList(ptr, allWords, prefix));
+				}
+				else {
+					nodeList.add(ptr);
+				}
+			}
+			ptr = ptr.sibling;
+		}
 		
 		
 		// FOLLOWING LINE IS A PLACEHOLDER TO ENSURE COMPILATION
 		// MODIFY IT AS NEEDED FOR YOUR IMPLEMENTATION
-		return null;
+		return nodeList;
 	}
 	
 	public static void print(TrieNode root, String[] allWords) {
