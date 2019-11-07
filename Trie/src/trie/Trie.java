@@ -96,9 +96,9 @@ public class Trie {
 		
 		ArrayList<TrieNode> nodeList = new ArrayList<TrieNode>();
 		TrieNode ptr = root;
-		//if(root.firstChild == null) {
-		//	ptr = root.firstChild;
-		//}
+		if(root.substr == null) {
+			ptr = root.firstChild;
+		}
 		
 		while(ptr != null) {
 			if((allWords[ptr.substr.wordIndex].startsWith(prefix))) {
@@ -112,10 +112,7 @@ public class Trie {
 			}
 			ptr = ptr.sibling;
 		}
-		
-		
-		// FOLLOWING LINE IS A PLACEHOLDER TO ENSURE COMPILATION
-		// MODIFY IT AS NEEDED FOR YOUR IMPLEMENTATION
+
 		return nodeList;
 	}
 	
