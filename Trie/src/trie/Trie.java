@@ -38,7 +38,7 @@ public class Trie {
 			while(ptr != null) {
 				while(allWords[ptr.substr.wordIndex].charAt(startIndex) == currentWord.charAt(startIndex) && startIndex - 1 < ptr.substr.endIndex) {
 					startIndex++;
-				}
+				}	
 				if(startIndex == 0 || startIndex == ptr.substr.startIndex) {
 					prev = ptr;
 					ptr = ptr.sibling;
@@ -56,16 +56,18 @@ public class Trie {
 			}
 									
 			if(startIndex == 0 || startIndex == prev.substr.startIndex) {
+				index.startIndex = startIndex;
 				prev.sibling = new TrieNode(index, null, null);				
 			}
+			
 			else {
 				Indexes firstIndex = new Indexes(prev.substr.wordIndex, startIndex, prev.substr.endIndex);
 				prev.substr.endIndex = (short) (startIndex - 1);			
 				Indexes nextIndex = new Indexes(i, startIndex, endIndex);		
 				TrieNode saveFirstChild = prev.firstChild;
 				prev.firstChild = new TrieNode(firstIndex, null, null);
-				prev.firstChild.firstChild = saveFirstChild;
 				prev.firstChild.sibling = new TrieNode(nextIndex, null, null);
+				prev.firstChild.firstChild = saveFirstChild;
 				
 			}
 			
