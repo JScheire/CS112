@@ -121,6 +121,10 @@ public class Trie {
 			}
 			ptr = ptr.sibling;
 		}
+		
+		if(nodeList.isEmpty()) {
+			return null;
+		}
 
 		return nodeList;
 	}

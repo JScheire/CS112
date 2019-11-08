@@ -1,3 +1,0 @@
-eclipse.preferences.version=1
-org.eclipse.debug.core.PREF_BREAKPOINT_MANAGER_ENABLED_STATE=true
-prefWatchExpressions=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<watchExpressions>\n    <expression enabled\="true" text\="ptr1"/>\n    <expression enabled\="true" text\="ptr2"/>\n    <expression enabled\="true" text\="zeroCounter"/>\n    <expression enabled\="true" text\="carry"/>\n    <expression enabled\="true" text\="resultptr"/>\n    <expression enabled\="true" text\="result"/>\n    <expression enabled\="true" text\="tempresult"/>\n    <expression enabled\="true" text\="xyz"/>\n    <expression enabled\="true" text\="othertempresult"/>\n    <expression enabled\="true" text\="intList"/>\n</watchExpressions>\n
