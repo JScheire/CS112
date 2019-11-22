@@ -24,32 +24,30 @@ public class Friends {
 		
 		boolean[] visited = new boolean[g.members.length];
 		
-		Queue<Friend> queue = new Queue<Friend>();
+		Queue<String> queue = new Queue<String>();
 		
 		int index = g.map.get(p1);
+		visited[index] = true;
+		queue.enqueue(p1);
 		
 		while(!(queue.isEmpty())) {
+		    
+			String next = queue.dequeue();
+			System.out.println(next);
+			index = g.map.get(next);
 			
-			while(ptr != null) {
-					
-				ptr = ptr.next;
+			
+			for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {
+			    int nextIndex = ptr.fnum;
+			    if(!visited[nextIndex]) {
+			        visited[nextIndex] = true;
+			        queue.enqueue(g.members[nextIndex].name);
+			    }
+			    
 			}
-			queue.dequeue();
-		}
 				
 			
 		}
-		
-		
-		
-		
-		
-		
-		
-		//visited[p1] = true;
-		//queue.enqueue(p1);
-		
-		System.out.println(g.members[0].name);
 		
 		
 		
