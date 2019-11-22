@@ -1,6 +1,7 @@
 package friends;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import structures.Queue;
 import structures.Stack;
@@ -23,7 +24,25 @@ public class Friends {
 		
 		boolean[] visited = new boolean[g.members.length];
 		
-		Queue<String> queue = new Queue<String>();
+		Queue<Friend> queue = new Queue<Friend>();
+		
+		int index = g.map.get(p1);
+		
+		while(!(queue.isEmpty())) {
+			
+			while(ptr != null) {
+					
+				ptr = ptr.next;
+			}
+			queue.dequeue();
+		}
+				
+			
+		}
+		
+		
+		
+		
 		
 		
 		
