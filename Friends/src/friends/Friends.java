@@ -26,22 +26,43 @@ public class Friends {
 		
 		Queue<String> queue = new Queue<String>();
 		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		String[] previous = new String[g.members.length];
+		
 		int index = g.map.get(p1);
 		visited[index] = true;
 		queue.enqueue(p1);
 		
 		while(!(queue.isEmpty())) {
+			
 		    
 			String next = queue.dequeue();
-			System.out.println(next);
+			result.add(next);
 			index = g.map.get(next);
-			
 			
 			for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {
 			    int nextIndex = ptr.fnum;
 			    if(!visited[nextIndex]) {
-			        visited[nextIndex] = true;
-			        queue.enqueue(g.members[nextIndex].name);
+			    	visited[nextIndex] = true;
+			    	previous[nextIndex] = next;
+			    	queue.enqueue(g.members[nextIndex].name);   
+			        
+			        if(g.members[nextIndex].name.equals(p2)) {
+			        	int traceindex = 0;
+			        	for(int i = 0; i < previous.length; i++) {
+			        		if(previous[i].equals(p2)) {
+			        			traceindex = i;
+			        		}
+			        	}
+			        	
+			        	//Figure out to keep track of previous nodes
+			        	while(previous[traceindex] != null) {
+			        		System.out.println(previous[traceindex]);
+			        		traceindex--;
+			        	}
+			        }
+			    
 			    }
 			    
 			}
