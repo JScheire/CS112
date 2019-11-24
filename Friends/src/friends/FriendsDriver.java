@@ -13,7 +13,7 @@ public class FriendsDriver {
 		
 		Graph g = new Graph(sc);
 		
-		ArrayList<String> shortest = Friends.shortestChain(g, "sam", "aparna");
+		ArrayList<String> shortest = Friends.shortestChain(g, "sam", "sergei");
 		
 		if(shortest == null) {
 			System.out.println("No link");

@@ -2,6 +2,7 @@ package friends;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import structures.Queue;
 import structures.Stack;
@@ -30,38 +31,36 @@ public class Friends {
 		
 		String[] previous = new String[g.members.length];
 		
+		ArrayList<String> members = new ArrayList<String>();
+		
+		String shortestname = p2;
 		int index = g.map.get(p1);
 		visited[index] = true;
 		queue.enqueue(p1);
 		
 		while(!(queue.isEmpty())) {
 			
-		    
 			String next = queue.dequeue();
-			result.add(next);
 			index = g.map.get(next);
+			if(next.equals(p2)) {
+                result.add(p2);
+                for(Person p : g.members) {
+                    members.add(p.name);
+                }
+                while(previous[members.indexOf(shortestname)] != null) {
+                    result.add(previous[members.indexOf(shortestname)]);
+                    shortestname = previous[members.indexOf(shortestname)];
+                }
+                return result;
+            }
 			
 			for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {
 			    int nextIndex = ptr.fnum;
+			    
 			    if(!visited[nextIndex]) {
 			    	visited[nextIndex] = true;
 			    	previous[nextIndex] = next;
 			    	queue.enqueue(g.members[nextIndex].name);   
-			        
-			        if(g.members[nextIndex].name.equals(p2)) {
-			        	int traceindex = 0;
-			        	for(int i = 0; i < previous.length; i++) {
-			        		if(previous[i].equals(p2)) {
-			        			traceindex = i;
-			        		}
-			        	}
-			        	
-			        	//Figure out to keep track of previous nodes
-			        	while(previous[traceindex] != null) {
-			        		System.out.println(previous[traceindex]);
-			        		traceindex--;
-			        	}
-			        }
 			    
 			    }
 			    
@@ -70,9 +69,8 @@ public class Friends {
 			
 		}
 		
-		
-		
 		return null;
+		
 	}
 	
 	/*private static ArrayList<ArrayList<String>> createAdjList(Graph g){
