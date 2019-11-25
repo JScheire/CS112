@@ -194,6 +194,9 @@ public class Friends {
 				result.add(g.members[i].name);
 		}
 		
+		if(result.isEmpty()) {
+			return null;
+		}
 		return result;
 		
 	}
