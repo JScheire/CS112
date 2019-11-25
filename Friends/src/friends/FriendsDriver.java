@@ -24,7 +24,7 @@ public class FriendsDriver {
 				System.out.println(person);
 			}
 		}
-		*/
+		
 		
 		
 		ArrayList<ArrayList<String>> cliques = Friends.cliques(g, "rutgers");
@@ -33,6 +33,12 @@ public class FriendsDriver {
                 System.out.println(perClique.toString());
             }
         }
+        */
+		
+		ArrayList<String> connectors = Friends.connectors(g);
+		for(String connector : connectors) {
+			System.out.println(connector);
+		}
 		
 	}
 

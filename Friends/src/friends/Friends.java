@@ -69,7 +69,7 @@ public class Friends {
 		
 	}
 	
-	private static void DFS1(Graph g, String school, boolean[] visited, int index, ArrayList<String> clique) {
+	private static void DFS(Graph g, String school, boolean[] visited, int index, ArrayList<String> clique) {
         visited[index] = true;
         if(g.members[index].student && g.members[index].school.equals(school))
             clique.add(g.members[index].name);
@@ -78,7 +78,7 @@ public class Friends {
             int nextIndex = ptr.fnum;
             
             if(!(visited[nextIndex]) && g.members[nextIndex].student && g.members[nextIndex].school.equals(school)) {
-                DFS1(g, school, visited, nextIndex, clique);
+                DFS(g, school, visited, nextIndex, clique);
             }
         }
         
@@ -109,7 +109,7 @@ public class Friends {
 	        
 	        ArrayList<String> clique = new ArrayList<String>();
 	        
-	        DFS1(g, school, visited, i, clique);
+	        DFS(g, school, visited, i, clique);
 	        
 	        if(!clique.isEmpty()) {
 	            result.add(clique);
@@ -123,6 +123,42 @@ public class Friends {
 		
 	}
 	
+	private static void DFSfindConnectors(Graph g, int index, boolean[] visited, int time, boolean[] connectors, int[] parent, int[] depth, int[] low) {
+		
+		int childCount = 0;
+		
+		visited[index] = true;
+		depth[index] = low[index] = ++time;
+		
+		for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {
+			int nextIndex = ptr.fnum;
+			
+			if(!visited[nextIndex]) {
+				childCount++;
+				parent[nextIndex] = index;
+				DFSfindConnectors(g, nextIndex, visited, time, connectors, parent, depth, low);
+				
+				low[index] = Math.min(low[index], low[nextIndex]);
+				
+				if(parent[index] == -1 && childCount > 1) {
+					connectors[index] = true;
+				}
+				
+				if(parent[index] != -1 && low[nextIndex] >= depth[index]) {
+					connectors[index] = true;
+				}
+				
+			}
+			
+			else if(nextIndex != parent[index]){
+				low[index] = Math.min(low[index], depth[nextIndex]);
+			}
+		}
+		
+	}
+	
+	
+	
 	
 	
 	/**
@@ -133,11 +169,32 @@ public class Friends {
 	 */
 	public static ArrayList<String> connectors(Graph g) {
 		
-		/** COMPLETE THIS METHOD **/
+		boolean visited[] = new boolean[g.members.length];
 		
-		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY
-		// CHANGE AS REQUIRED FOR YOUR IMPLEMENTATION
-		return null;
+		int[] depth = new int[g.members.length];
+		
+		int[] low = new int[g.members.length];
+		
+		int[] parent = new int[g.members.length];
+		Arrays.fill(parent, -1);
+		
+		boolean[] connectors = new boolean[g.members.length];
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		int time = 0;
+		
+		for(int i = 0; i < g.members.length; i++) {
+			if(!visited[i])
+				DFSfindConnectors(g, i, visited, time, connectors, parent, depth, low);
+		}
+		
+		for(int i = 0; i < g.members.length; i++) {
+			if(connectors[i])
+				result.add(g.members[i].name);
+		}
+		
+		return result;
 		
 	}
 }
