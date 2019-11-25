@@ -60,31 +60,30 @@ public class Friends {
 			    if(!visited[nextIndex]) {
 			    	visited[nextIndex] = true;
 			    	previous[nextIndex] = next;
-			    	queue.enqueue(g.members[nextIndex].name);   
-			    
-			    }
-			    
+			    	queue.enqueue(g.members[nextIndex].name);       
+			    }		    
 			}
-				
-			
 		}
 		
 		return null;
 		
 	}
 	
-	/*private static ArrayList<ArrayList<String>> createAdjList(Graph g){
-		ArrayList<ArrayList<String>> adj = new ArrayList<ArrayList<String>>(g.members.length);
-		
-		for(int i = 0; i < adj.size(); i++) {
-			adj.add(new ArrayList<String>());
-		}
-		
-		for(int j = 0; i < g.members)
-		
-		
-		return null;
-	}*/
+	private static void DFS1(Graph g, String school, boolean[] visited, int index, ArrayList<String> clique) {
+        visited[index] = true;
+        if(g.members[index].student && g.members[index].school.equals(school))
+            clique.add(g.members[index].name);
+      
+        for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {
+            int nextIndex = ptr.fnum;
+            
+            if(!(visited[nextIndex]) && g.members[nextIndex].student && g.members[nextIndex].school.equals(school)) {
+                DFS1(g, school, visited, nextIndex, clique);
+            }
+        }
+        
+        
+    }
 	
 	/**
 	 * Finds all cliques of students in a given school.
@@ -98,14 +97,33 @@ public class Friends {
 	 *         given school
 	 */
 	public static ArrayList<ArrayList<String>> cliques(Graph g, String school) {
-		
-		/** COMPLETE THIS METHOD **/
-		
-		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY
-		// CHANGE AS REQUIRED FOR YOUR IMPLEMENTATION
-		return null;
+        
+	    boolean[] visited = new boolean[g.members.length];
+	    
+	    ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+	    
+	    for(int i = 0; i < g.members.length; i++) {
+	        
+	        if(visited[i])
+	            continue;
+	        
+	        ArrayList<String> clique = new ArrayList<String>();
+	        
+	        DFS1(g, school, visited, i, clique);
+	        
+	        if(!clique.isEmpty()) {
+	            result.add(clique);
+	        }
+	        
+	    }
+		if(result.isEmpty()) {
+		    return null;
+		}
+		return result;
 		
 	}
+	
+	
 	
 	/**
 	 * Finds and returns all connectors in the graph.

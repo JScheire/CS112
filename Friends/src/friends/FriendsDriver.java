@@ -13,6 +13,7 @@ public class FriendsDriver {
 		
 		Graph g = new Graph(sc);
 		
+		/*
 		ArrayList<String> shortest = Friends.shortestChain(g, "sam", "sergei");
 		
 		if(shortest == null) {
@@ -23,6 +24,15 @@ public class FriendsDriver {
 				System.out.println(person);
 			}
 		}
+		*/
+		
+		
+		ArrayList<ArrayList<String>> cliques = Friends.cliques(g, "rutgers");
+        if(cliques != null) {
+            for(ArrayList<String> perClique : cliques) {
+                System.out.println(perClique.toString());
+            }
+        }
 		
 	}
 
