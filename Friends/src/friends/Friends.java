@@ -1,8 +1,6 @@
 package friends;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import structures.Queue;
 import structures.Stack;
@@ -176,7 +174,9 @@ public class Friends {
 		int[] low = new int[g.members.length];
 		
 		int[] parent = new int[g.members.length];
-		Arrays.fill(parent, -1);
+		for(int i = 0; i < parent.length; i++) {
+			parent[i] = -1;
+		}
 		
 		boolean[] connectors = new boolean[g.members.length];
 		
