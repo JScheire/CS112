@@ -27,9 +27,14 @@ public class Friends {
 		
 		ArrayList<String> result = new ArrayList<String>();
 		
+		ArrayList<String> reverseResult = new ArrayList<String>();
+		
 		String[] previous = new String[g.members.length];
 		
 		ArrayList<String> members = new ArrayList<String>();
+		
+		if(p1.equals(p2))
+			return null;
 		
 		String shortestname = p2;
 		int index = g.map.get(p1);
@@ -49,7 +54,10 @@ public class Friends {
                     result.add(previous[members.indexOf(shortestname)]);
                     shortestname = previous[members.indexOf(shortestname)];
                 }
-                return result;
+                for(int i = result.size() - 1; i >= 0; i--) {
+                	reverseResult.add(result.get(i));
+                }
+                return reverseResult;
             }
 			
 			for(Friend ptr = g.members[index].first; ptr != null; ptr = ptr.next) {

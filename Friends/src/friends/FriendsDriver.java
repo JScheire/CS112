@@ -24,9 +24,7 @@ public class FriendsDriver {
 				System.out.println("No link");
 			}
 			else {
-				for(String person : shortest) {
-					System.out.println(person);
-				}
+				System.out.println(shortest.toString());
 			}
 			
 			
@@ -41,12 +39,9 @@ public class FriendsDriver {
 	        }
 	        
 	        
-	        
 			System.out.println("Connectors: ");
 			ArrayList<String> connectors = Friends.connectors(g);
-			for(String connector : connectors) {
-				System.out.println(connector);
-			}
+			System.out.println(connectors.toString());
 		sc.close();
 		
 	}
