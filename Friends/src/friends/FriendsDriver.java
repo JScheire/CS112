@@ -41,7 +41,10 @@ public class FriendsDriver {
 	        
 			System.out.println("Connectors: ");
 			ArrayList<String> connectors = Friends.connectors(g);
-			System.out.println(connectors.toString());
+			if(connectors == null)
+				System.out.println("No connectors");
+			else
+				System.out.println(connectors.toString());
 		sc.close();
 		
 	}
